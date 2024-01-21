@@ -1,0 +1,45 @@
+#This is for @Circuit breaker
+resilience4j:
+  circuitbreaker:
+    instances:
+      xyz:
+        registerHealthIndicator: true
+        slidingWindowSize: 10 #No of request to be monitored
+        slidingWindowType: COUNT_BASED
+        failureRateThreshold: 50 # if 5 out of 10 failed then change the status to open
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 5s
+        permittedNumberOfCallsInHalfOpenState: 3
+
+# This is for @Retry
+  retry:
+     instances:
+       xyz-retry:
+        maxAttempts: 3
+        waitDuration: 5s
+
+#This is for @RateLimiter
+  ratelimiter:
+    instances:
+      employee-rate-limiter:
+        limitForPeriod: 5 #total no of request can be sent in 30 sec
+        limitRefreshPeriod: 30s
+
+#This is for bulk head
+  bulkhead:
+    instances:
+      employee-bulkhead:
+        maxConcurrentCalls: 5
+        maxWaitDuration: 
+#This is for enabling actuator so that we can see circuit
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
